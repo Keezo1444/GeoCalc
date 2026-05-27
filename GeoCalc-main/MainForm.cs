@@ -16,7 +16,7 @@ namespace GeoCalc
         private Shape _currentShape;
         private int _selectedCalculationType = 0;
 
-        // Farby
+        // Farby - Dark mode s gradient efektom
         private readonly Color _bgDark = Color.FromArgb(20, 20, 26);
         private readonly Color _bgMedium = Color.FromArgb(30, 30, 40);
         private readonly Color _bgLight = Color.FromArgb(45, 45, 58);
@@ -82,6 +82,11 @@ namespace GeoCalc
         {
             this.BackColor = _bgDark;
             this.DoubleBuffered = true;
+            this.Text = "GeoCalc - Kalkulačka Geometrických Tvarov";
+            this.Icon = null;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.MinimumSize = new Size(1400, 800);
+            
             SetupUI();
             
             if (_shapes2D.Count > 0)
@@ -705,11 +710,25 @@ namespace GeoCalc
                     {
                         string[] calcTypeNames = _currentShape is Shape2D ? new[] { "Obvod", "Obsah" } : new[] { "Objem", "Povrch" };
                         string content = $"GeoCalc - Export výsledkov\nDátum: {DateTime.Now:dd.MM.yyyy HH:mm:ss}\nTvar: {_currentShape?.Name}\nTyp výpočtu: {calcTypeNames[_selectedCalculationType]}\n\n";
+                        
+                        content += "═══════════════════════════════════════\n";
+                        content += "ZADANÉ PARAMETRE:\n";
+                        content += "═══════════════════════════════════════\n";
                         for (int i = 0; i < _inputFields.Count; i++)
                             content += $"{_currentShape.ParameterNames[i]}: {_inputFields[i].Text}\n";
-                        content += $"\n{_formulaTextBox.Text}\n\n{_resultTextBox.Text}";
+                        
+                        content += $"\n═══════════════════════════════════════\n";
+                        content += "VZORCE:\n";
+                        content += "═══════════════════════════════════════\n";
+                        content += $"{_formulaTextBox.Text}\n\n";
+                        
+                        content += "═══════════════════════════════════════\n";
+                        content += "VÝSLEDKY:\n";
+                        content += "═══════════════════════════════════════\n";
+                        content += $"{_resultTextBox.Text}";
+                        
                         File.WriteAllText(dialog.FileName, content);
-                        MessageBox.Show($"Výsledky boli exportované do: {dialog.FileName}", "Úspech", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"Výsledky boli exportované do:\n{dialog.FileName}", "Úspech", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
